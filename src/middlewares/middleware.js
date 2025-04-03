@@ -15,7 +15,7 @@ const userAuth = (req, res, next) => {
   console.log("checked user authorization!");
 
   const jwtToken = "xyz";
-  isAuthenticated = jwtToken === "xyzd";
+  isAuthenticated = jwtToken === "xyz";
 
   if (!isAuthenticated) {
     res.status(400).send("unauthenticated user");
