@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const JWT_PRIVATE_KEY = "Dev@TInder123";
 
 const userSchema = new mongoose.Schema(
   {
-    firstName: {
+    name: {
       type: String,
       minLength: 3,
       maxLength: 50,
@@ -14,18 +17,7 @@ const userSchema = new mongoose.Schema(
         return v;
       },
     },
-    lastName: {
-      type: String,
-      minLength: 3,
-      maxLength: 50,
-      set: function (v) {
-        if (typeof v !== "string") {
-          throw new Error("lastName must be a string");
-        }
-        return v;
-      },
-    },
-    emailId: {
+    email: {
       type: String,
       required: true,
       unique: true,
@@ -39,15 +31,8 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    password: {
-      type: String,
-      minLength: 5,
-      required: true,
-      validate(value) {
-        if (!validator.isStrongPassword(value)) {
-          throw new Error(value + " is not a strong password");
-        }
-      },
+    phone: {
+      type: Number,
     },
     description: {
       type: String,
@@ -84,6 +69,25 @@ userSchema.pre("save", function (next) {
   }
   next();
 });
+
+userSchema.methods.getJwt = async function () {
+  const user = this;
+  const token = await jwt.sign({ userId: user._id }, JWT_PRIVATE_KEY, {
+    expiresIn: "1d",
+  });
+  return token;
+};
+
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
+  const user = this;
+  const hashedPassword = user.password;
+
+  const isPosswordValid = await bcrypt.compare(
+    passwordInputByUser,
+    hashedPassword
+  );
+  return isPosswordValid;
+};
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
