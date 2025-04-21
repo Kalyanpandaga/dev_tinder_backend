@@ -32,9 +32,9 @@ authRouter.post("/signup", async (req, res) => {
     const user = new User(createUserData);
 
     await user.save();
-    res.send("user data created successfully");
+    res.status(201).json({ message: "user data created successfully" });
   } catch (err) {
-    res.send("ERROR: " + err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -63,20 +63,30 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("invalid credentials!");
     }
 
+    const userData = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      age: user.age,
+      profileUrl: user.profileUrl,
+      description: user.description,
+      skills: user.skills,
+    };
+
     const token = await user.getJwt();
     res.cookie("token", token, { maxAge: 900000 });
-    res.send("Successfully Login !!");
+    res.status(200).json({ UserData: userData });
   } catch (err) {
-    res.send("ERROR: " + err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 
 authRouter.post("/logout", userAuth, async (req, res) => {
   try {
     res.clearCookie("token");
-    res.send("Successfully Logout !!");
+    res.status(200).send("Successfully Logout !!");
   } catch (err) {
-    res.send("ERROR: " + err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 

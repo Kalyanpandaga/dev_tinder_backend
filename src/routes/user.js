@@ -7,7 +7,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
 const sendedUserFields =
-  "firstName lastName gender age profileUrl profileUrl description skills";
+  "firstName lastName gender age profileUrl description skills";
 
 userRouter.get("/requests/recieved", userAuth, async (req, res) => {
   try {
