@@ -16,16 +16,7 @@ authRouter.post("/signup", async (req, res) => {
   try {
     const userData = req.body;
     validateSingupData(userData);
-    const {
-      firstName,
-      lastName,
-      emailId,
-      password,
-      profileUrl,
-      age,
-      gender,
-      skills,
-    } = userData;
+    const { firstName, lastName, emailId, password } = userData;
 
     const saltRounds = 10;
 
@@ -37,22 +28,6 @@ authRouter.post("/signup", async (req, res) => {
       emailId,
       password: hashedPassword,
     };
-
-    if (profileUrl) {
-      createUserData = { ...createUserData, profileUrl };
-    }
-
-    if (age) {
-      createUserData = { ...createUserData, age };
-    }
-
-    if (gender) {
-      createUserData = { ...createUserData, gender };
-    }
-
-    if (skills) {
-      createUserData = { ...createUserData, skills };
-    }
 
     const user = new User(createUserData);
 

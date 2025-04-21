@@ -6,7 +6,7 @@ const JWT_PRIVATE_KEY = "Dev@TInder123";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       minLength: 3,
       maxLength: 50,
@@ -17,7 +17,18 @@ const userSchema = new mongoose.Schema(
         return v;
       },
     },
-    email: {
+    lastName: {
+      type: String,
+      minLength: 3,
+      maxLength: 50,
+      set: function (v) {
+        if (typeof v !== "string") {
+          throw new Error("lastName must be a string");
+        }
+        return v;
+      },
+    },
+    emailId: {
       type: String,
       required: true,
       unique: true,
@@ -31,8 +42,15 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    phone: {
-      type: Number,
+    password: {
+      type: String,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error(
+            "A strong password is required, password containes atleast one capital letter, one smaller letter, one number, one spacial char and password length should be minimum 8 characters"
+          );
+        }
+      },
     },
     description: {
       type: String,
