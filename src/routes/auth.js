@@ -31,8 +31,25 @@ authRouter.post("/signup", async (req, res) => {
 
     const user = new User(createUserData);
 
-    await user.save();
-    res.status(201).json({ message: "user data created successfully" });
+    const savedUser = await user.save();
+
+    const savedUserData = {
+      firstName: savedUser.firstName,
+      lastName: savedUser.lastName,
+      gender: user.gender,
+      age: user.age,
+      profileUrl: user.profileUrl,
+      description: user.description,
+      skills: user.skills,
+    };
+
+    const token = await user.getJwt();
+    res.cookie("token", token, { maxAge: 900000 });
+
+    res.status(201).json({
+      message: "user data created successfully",
+      userData: savedUserData,
+    });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -75,7 +92,7 @@ authRouter.post("/login", async (req, res) => {
 
     const token = await user.getJwt();
     res.cookie("token", token, { maxAge: 900000 });
-    res.status(200).json({ UserData: userData });
+    res.status(200).json({ userData: userData });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

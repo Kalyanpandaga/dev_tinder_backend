@@ -27,14 +27,14 @@ const userAuth = async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_PRIVATE_KEY);
     const { userId } = decoded;
 
-    user = await User.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       throw new Error("User not found");
     }
     req.user = user;
     next();
   } catch (err) {
-    res.status(400).send("Error: " + err.message);
+    res.status(401).json({ error: err.message });
   }
 };
 module.exports = { adminAuth, userAuth };
