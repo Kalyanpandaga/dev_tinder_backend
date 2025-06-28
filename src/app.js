@@ -1,4 +1,4 @@
-const PORT = 5000;
+const PORT = 7777;
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/database");
