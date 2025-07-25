@@ -11,10 +11,20 @@ const {
 
 profileRouter.get("/view", userAuth, async (req, res) => {
   try {
-    userData = req.user;
-    res.send(userData);
+    const userData = {
+      _id: req.user._id,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      gender: req.user.gender,
+      age: req.user.age,
+      profileUrl: req.user.profileUrl,
+      description: req.user.description,
+      skills: req.user.skills,
+    };
+
+    res.status(200).json({ userData: userData });
   } catch (err) {
-    res.status(400).send("ERROR: ", err);
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -31,7 +41,7 @@ profileRouter.put("/edit", userAuth, async (req, res) => {
       updatedData: loginUser,
     });
   } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -56,9 +66,9 @@ profileRouter.put("/password", userAuth, async (req, res) => {
     loginUser.password = newHashedPassword;
     await loginUser.save();
     res.clearCookie("token");
-    res.send("password changed successfully");
+    res.json({ message: "password changed successfully" });
   } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
+    res.status(400).send({ error: err.message });
   }
 });
 

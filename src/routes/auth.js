@@ -34,17 +34,18 @@ authRouter.post("/signup", async (req, res) => {
     const savedUser = await user.save();
 
     const savedUserData = {
+      _id: savedUser._id,
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
-      gender: user.gender,
-      age: user.age,
-      profileUrl: user.profileUrl,
-      description: user.description,
-      skills: user.skills,
+      gender: savedUser.gender,
+      age: savedUser.age,
+      profileUrl: savedUser.profileUrl,
+      description: savedUser.description,
+      skills: savedUser.skills,
     };
 
     const token = await user.getJwt();
-    res.cookie("token", token, { maxAge: 900000 });
+    res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000 });
 
     res.status(201).json({
       message: "user data created successfully",
@@ -81,6 +82,7 @@ authRouter.post("/login", async (req, res) => {
     }
 
     const userData = {
+      _id: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
       gender: user.gender,
@@ -91,7 +93,7 @@ authRouter.post("/login", async (req, res) => {
     };
 
     const token = await user.getJwt();
-    res.cookie("token", token, { maxAge: 900000 });
+    res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000 });
     res.status(200).json({ userData: userData });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -101,7 +103,7 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/logout", userAuth, async (req, res) => {
   try {
     res.clearCookie("token");
-    res.status(200).send("Successfully Logout !!");
+    res.status(200).json({ message: "Successfully Logout !!" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

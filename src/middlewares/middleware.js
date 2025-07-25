@@ -3,19 +3,6 @@ const JWT_PRIVATE_KEY = "Dev@TInder123";
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
-const adminAuth = (req, res, next) => {
-  console.log("checked admin authorization!");
-
-  const jwtToken = "xyz";
-  isAuthenticated = jwtToken === "xyz";
-
-  if (!isAuthenticated) {
-    res.status(400).send("unauthenticated admin user");
-  } else {
-    next();
-  }
-};
-
 const userAuth = async (req, res, next) => {
   try {
     const cookies = req.cookies;
@@ -37,4 +24,4 @@ const userAuth = async (req, res, next) => {
     res.status(401).json({ error: err.message });
   }
 };
-module.exports = { adminAuth, userAuth };
+module.exports = { userAuth };

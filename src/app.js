@@ -1,14 +1,17 @@
-const PORT = 7777;
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
+require("dotenv").config();
+const http = require("http");
+
+const { FRONTEND_BASE_URL, PORT } = require("./config/constants");
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: FRONTEND_BASE_URL,
     credentials: true,
   })
 );
@@ -19,16 +22,23 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const chatRouter = require("./routes/chat");
+const initializeSocket = require("./utils/socket");
 
-app.use("/", authRouter);
-app.use("/profile", profileRouter);
-app.use("/request", requestRouter);
-app.use("/user", userRouter);
+app.use("/api/", authRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/request", requestRouter);
+app.use("/api/user", userRouter);
+app.use("/api/chat", chatRouter);
 
+require("./utils/cronJob");
+
+const server = http.createServer(app);
+initializeSocket(server);
 connectDB()
   .then(() => {
     console.log("Database connection established...");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`server successfully listen at port ${PORT}`);
     });
   })
